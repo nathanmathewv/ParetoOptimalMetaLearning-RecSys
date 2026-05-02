@@ -1,0 +1,9 @@
+MetaHIN-master/
+*.pdf
+.DS_Store
+__pycache__/
+*.pyc
+venv/
+.env
+data/
+!data/movielens/
