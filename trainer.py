@@ -1,10 +1,20 @@
 import torch
 import torch.nn.functional as F
 from tqdm import tqdm
+import logging
 from utils.data_loader import get_dataloader
 from models.hete_ml import FairMetaHIN
 from utils.losses import get_accuracy_loss, get_user_fairness_loss, get_item_fairness_loss, get_path_fairness_loss
 from utils.mgda import MGDAOptimizer
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(message)s',
+    handlers=[
+        logging.FileHandler("training.log"),
+        logging.StreamHandler()
+    ]
+)
 
 def train(config, data_dir, epochs=5):
     device = torch.device("cuda" if config.get('use_cuda', False) else "cpu")
@@ -16,7 +26,7 @@ def train(config, data_dir, epochs=5):
     # Dataloader
     dataloader = get_dataloader(data_dir, state='meta_training', batch_size=config.get('batch_size', 16))
     
-    print("Starting training...")
+    logging.info("Starting training...")
     for epoch in range(epochs):
         model.train()
         total_loss = 0.0
@@ -129,7 +139,7 @@ def train(config, data_dir, epochs=5):
             
             total_loss += final_loss.item()
             
-        print(f"Epoch {epoch+1} completed. Avg Loss: {total_loss / len(dataloader):.4f}")
+        logging.info(f"Epoch {epoch+1} completed. Avg Loss: {total_loss / len(dataloader):.4f}")
 
 if __name__ == "__main__":
     config = {
