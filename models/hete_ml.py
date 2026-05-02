@@ -40,7 +40,7 @@ class FairMetaHIN(torch.nn.Module):
 
         support_set_y_pred = self.meta_learner(support_user_emb, support_item_emb, support_mp_user_emb, vars_dict)
         loss = F.mse_loss(support_set_y_pred, support_set_y)
-        grad = torch.autograd.grad(loss, vars_dict.values(), create_graph=True, allow_unused=True)
+        grad = torch.autograd.grad(loss, vars_dict.values(), create_graph=False, allow_unused=True)
 
         fast_weights = {}
         for i, w in enumerate(vars_dict.keys()):
@@ -52,7 +52,7 @@ class FairMetaHIN(torch.nn.Module):
         for idx in range(1, self.config.get('local_update', 1)):
             support_set_y_pred = self.meta_learner(support_user_emb, support_item_emb, support_mp_user_emb, vars_dict=fast_weights)
             loss = F.mse_loss(support_set_y_pred, support_set_y)
-            grad = torch.autograd.grad(loss, fast_weights.values(), create_graph=True, allow_unused=True)
+            grad = torch.autograd.grad(loss, fast_weights.values(), create_graph=False, allow_unused=True)
 
             for i, w in enumerate(fast_weights.keys()):
                 if grad[i] is not None:
@@ -92,7 +92,7 @@ class FairMetaHIN(torch.nn.Module):
             # Meta-path learner update
             support_set_y_pred = self.meta_learner(support_user_emb, support_item_emb, support_mp_enhanced_user_emb)
             loss = F.mse_loss(support_set_y_pred, support_y)
-            grad = torch.autograd.grad(loss, mp_initial_weights.values(), create_graph=True, allow_unused=True)
+            grad = torch.autograd.grad(loss, mp_initial_weights.values(), create_graph=False, allow_unused=True)
             
             fast_weights = {}
             for i in range(self.mp_weight_len):
@@ -106,7 +106,7 @@ class FairMetaHIN(torch.nn.Module):
                 support_mp_enhanced_user_emb = self.mp_learner(support_user_emb, support_item_emb, support_neighs_emb, mp, support_index_list, vars_dict=fast_weights)
                 support_set_y_pred = self.meta_learner(support_user_emb, support_item_emb, support_mp_enhanced_user_emb)
                 loss = F.mse_loss(support_set_y_pred, support_y)
-                grad = torch.autograd.grad(loss, fast_weights.values(), create_graph=True, allow_unused=True)
+                grad = torch.autograd.grad(loss, fast_weights.values(), create_graph=False, allow_unused=True)
                 for i in range(self.mp_weight_len):
                     weight_name = self.mp_weight_name[i]
                     if grad[i] is not None:

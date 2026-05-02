@@ -3,7 +3,7 @@ import numpy as np
 from scipy.optimize import minimize
 
 class MGDAOptimizer:
-    """
+    r"""
     Multiple Gradient Descent Algorithm (MGDA) using SLSQP to find the Pareto optimal weights.
     Finds weights w_i that minimize || \sum_i w_i g_i ||^2 subject to w_i >= 0, \sum w_i = 1.
     """

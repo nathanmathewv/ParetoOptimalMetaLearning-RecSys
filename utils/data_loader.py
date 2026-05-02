@@ -146,4 +146,4 @@ def collate_fn(batch):
 
 def get_dataloader(data_dir, state, batch_size=32, shuffle=True):
     dataset = MetaHINDataLoader(data_dir, state)
-    return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, collate_fn=collate_fn)
+    return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, collate_fn=collate_fn, num_workers=4)
