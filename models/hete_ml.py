@@ -39,7 +39,7 @@ class FairMetaHIN(torch.nn.Module):
             vars_dict = self.meta_learner.update_parameters()
 
         support_set_y_pred = self.meta_learner(support_user_emb, support_item_emb, support_mp_user_emb, vars_dict)
-        loss = F.mse_loss(support_set_y_pred, support_set_y)
+        loss = F.mse_loss(support_set_y_pred.view(-1), support_set_y.view(-1))
         grad = torch.autograd.grad(loss, vars_dict.values(), create_graph=False, allow_unused=True)
 
         fast_weights = {}
@@ -51,7 +51,7 @@ class FairMetaHIN(torch.nn.Module):
 
         for idx in range(1, self.config.get('local_update', 1)):
             support_set_y_pred = self.meta_learner(support_user_emb, support_item_emb, support_mp_user_emb, vars_dict=fast_weights)
-            loss = F.mse_loss(support_set_y_pred, support_set_y)
+            loss = F.mse_loss(support_set_y_pred.view(-1), support_set_y.view(-1))
             grad = torch.autograd.grad(loss, fast_weights.values(), create_graph=False, allow_unused=True)
 
             for i, w in enumerate(fast_weights.keys()):
@@ -91,7 +91,7 @@ class FairMetaHIN(torch.nn.Module):
             
             # Meta-path learner update
             support_set_y_pred = self.meta_learner(support_user_emb, support_item_emb, support_mp_enhanced_user_emb)
-            loss = F.mse_loss(support_set_y_pred, support_y)
+            loss = F.mse_loss(support_set_y_pred.view(-1), support_y.view(-1))
             grad = torch.autograd.grad(loss, mp_initial_weights.values(), create_graph=False, allow_unused=True)
             
             fast_weights = {}
@@ -105,7 +105,7 @@ class FairMetaHIN(torch.nn.Module):
             for idx in range(1, self.config.get('mp_update', 1)):
                 support_mp_enhanced_user_emb = self.mp_learner(support_user_emb, support_item_emb, support_neighs_emb, mp, support_index_list, vars_dict=fast_weights)
                 support_set_y_pred = self.meta_learner(support_user_emb, support_item_emb, support_mp_enhanced_user_emb)
-                loss = F.mse_loss(support_set_y_pred, support_y)
+                loss = F.mse_loss(support_set_y_pred.view(-1), support_y.view(-1))
                 grad = torch.autograd.grad(loss, fast_weights.values(), create_graph=False, allow_unused=True)
                 for i in range(self.mp_weight_len):
                     weight_name = self.mp_weight_name[i]
@@ -132,7 +132,7 @@ class FairMetaHIN(torch.nn.Module):
             
             # Query loss for attention
             query_set_y_pred = self.meta_learner(query_user_emb, query_item_emb, query_mp_enhanced_user_emb, vars_dict=mp_task_fast_weights)
-            q_loss = F.mse_loss(query_set_y_pred, query_y)
+            q_loss = F.mse_loss(query_set_y_pred.view(-1), query_y.view(-1))
             mp_task_loss_s[mp] = q_loss
             
         # Attention across meta-paths (Exposure_p)
