@@ -65,7 +65,7 @@ class HML(torch.nn.Module):
             vars_dict = self.meta_learner.update_parameters()
 
         support_set_y_pred = self.meta_learner(support_user_emb, support_item_emb, support_mp_user_emb, vars_dict)
-        loss = F.mse_loss(support_set_y_pred, support_set_y)
+        loss = F.mse_loss(support_set_y_pred.view(-1), support_set_y.view(-1))
         grad = torch.autograd.grad(loss, vars_dict.values(), create_graph=True)
 
         fast_weights = {}
@@ -74,7 +74,7 @@ class HML(torch.nn.Module):
 
         for idx in range(1, self.config['local_update']):  # for the current task, locally update
             support_set_y_pred = self.meta_learner(support_user_emb, support_item_emb, support_mp_user_emb, vars_dict=fast_weights)
-            loss = F.mse_loss(support_set_y_pred, support_set_y)  # calculate loss on support set
+            loss = F.mse_loss(support_set_y_pred.view(-1), support_set_y.view(-1))  # calculate loss on support set
             grad = torch.autograd.grad(loss, fast_weights.values(),
                                        create_graph=True)  # calculate gradients w.r.t. model parameters
 
@@ -110,7 +110,7 @@ class HML(torch.nn.Module):
 
             support_mp_enhanced_user_emb = self.mp_learner(support_user_emb, support_item_emb, support_neighs_emb, mp, support_index_list)
             support_set_y_pred = self.meta_learner(support_user_emb, support_item_emb, support_mp_enhanced_user_emb)
-            loss = F.mse_loss(support_set_y_pred, support_set_y)
+            loss = F.mse_loss(support_set_y_pred.view(-1), support_set_y.view(-1))
             grad = torch.autograd.grad(loss, mp_initial_weights.values(), create_graph=True)
 
             fast_weights = {}
@@ -122,7 +122,7 @@ class HML(torch.nn.Module):
                 support_mp_enhanced_user_emb = self.mp_learner(support_user_emb, support_item_emb, support_neighs_emb, mp, support_index_list,
                                                                vars_dict=fast_weights)
                 support_set_y_pred = self.meta_learner(support_user_emb, support_item_emb, support_mp_enhanced_user_emb)
-                loss = F.mse_loss(support_set_y_pred, support_set_y)
+                loss = F.mse_loss(support_set_y_pred.view(-1), support_set_y.view(-1))
                 grad = torch.autograd.grad(loss, fast_weights.values(), create_graph=True)
 
                 for i in range(self.mp_weight_len):
@@ -149,7 +149,7 @@ class HML(torch.nn.Module):
             query_set_y_pred = self.meta_learner(query_user_emb, query_item_emb, query_mp_enhanced_user_emb,
                                                  vars_dict=mp_task_fast_weights)
             query_set_y_pred = query_set_y_pred.view(-1)
-            q_loss = F.mse_loss(query_set_y_pred, query_set_y)
+            q_loss = F.mse_loss(query_set_y_pred.view(-1), query_set_y.view(-1))
             mp_task_loss_s[mp] = q_loss.data  # movielens: 0.8126 dbook 0.6084
             # mp_task_loss_s[mp] = loss.data  # dbook 0.6144
 
@@ -164,7 +164,7 @@ class HML(torch.nn.Module):
         query_y_pred = self.meta_learner(query_user_emb, query_item_emb, query_agg_enhanced_user_emb, vars_dict=agg_task_fast_weights)
         query_y_pred = query_y_pred.view(-1)
 
-        loss = F.mse_loss(query_y_pred, query_set_y)
+        loss = F.mse_loss(query_y_pred.view(-1), query_set_y.view(-1))
         query_y_real = query_set_y.data.cpu().numpy()
         query_y_pred = query_y_pred.data.cpu().numpy()
         mae, rmse = self.cal_metrics.prediction(query_y_real, query_y_pred)
@@ -198,7 +198,7 @@ class HML(torch.nn.Module):
             query_mp_enhanced_user_emb_s.append(query_mp_enhanced_user_emb)
 
             # query_set_y_pred = self.meta_learner(query_user_emb, query_item_emb, query_mp_enhanced_user_embs)
-            # q_loss = F.mse_loss(query_set_y_pred, query_set_y)
+            # q_loss = F.mse_loss(query_set_y_pred.view(-1), query_set_y.view(-1))
             # mp_task_loss_s[mp] = q_loss.data
 
         # mp_att = F.softmax(-torch.stack(list(mp_task_loss_s.values())), dim=0)
@@ -213,7 +213,7 @@ class HML(torch.nn.Module):
                                          support_agg_enhanced_user_emb)
         query_y_pred = self.meta_learner(query_user_emb, query_item_emb, query_agg_enhanced_user_emb, vars_dict=task_fast_weights)
         query_y_pred = query_y_pred.view(-1)
-        loss = F.mse_loss(query_y_pred, query_set_y)
+        loss = F.mse_loss(query_y_pred.view(-1), query_set_y.view(-1))
         query_y_real = query_set_y.data.cpu().numpy()
         query_y_pred = query_y_pred.data.cpu().numpy()
         mae, rmse = self.cal_metrics.prediction(query_y_real, query_y_pred)
@@ -251,7 +251,7 @@ class HML(torch.nn.Module):
             query_y_pred = self.meta_learner(query_user_emb, query_item_emb, query_mp_enhanced_user_emb,
                                              vars_dict=task_fast_weights)
             query_y_pred = query_y_pred.view(-1)
-            loss = F.mse_loss(query_y_pred, query_set_y)
+            loss = F.mse_loss(query_y_pred.view(-1), query_set_y.view(-1))
             mae, rmse = self.cal_metrics.prediction(query_set_y.data.cpu().numpy(),
                                                     query_y_pred.data.cpu().numpy())
             ndcg_5 = self.cal_metrics.ranking(query_set_y.data.cpu().numpy(),
@@ -293,14 +293,14 @@ class HML(torch.nn.Module):
         query_agg_enhanced_user_emb = torch.sum(agg_mp_emb * mp_att.unsqueeze(1), 1)
 
         support_y_pred = self.meta_learner(support_user_emb, support_item_emb, support_agg_enhanced_user_emb)
-        support_loss = F.mse_loss(support_y_pred, support_set_y)
+        support_loss = F.mse_loss(support_y_pred.view(-1), support_set_y.view(-1))
         support_mae, support_rmse = self.cal_metrics.prediction(support_set_y.data.cpu().numpy(),
                                                                 support_y_pred.data.cpu().numpy())
         support_ndcg_5 = self.cal_metrics.ranking(support_set_y.data.cpu().numpy(),
                                                   support_y_pred.data.cpu().numpy(), 5)
 
         query_y_pred = self.meta_learner(query_user_emb, query_item_emb, query_agg_enhanced_user_emb)
-        query_loss = F.mse_loss(query_y_pred, query_set_y)
+        query_loss = F.mse_loss(query_y_pred.view(-1), query_set_y.view(-1))
         query_mae, query_rmse = self.cal_metrics.prediction(query_set_y.data.cpu().numpy(),
                                                             query_y_pred.data.cpu().numpy())
         query_ndcg_5 = self.cal_metrics.ranking(query_set_y.data.cpu().numpy(),
@@ -432,7 +432,7 @@ class HML(torch.nn.Module):
         support_agg_enhanced_user_emb = torch.sum(agg_mp_emb * mp_att.unsqueeze(1), 1)
 
         support_y_pred = self.meta_learner(support_user_emb, support_item_emb, support_agg_enhanced_user_emb)
-        support_loss = F.mse_loss(support_y_pred, support_y)
+        support_loss = F.mse_loss(support_y_pred.view(-1), support_y.view(-1))
 
         # fine-tune
         self.meta_optimizer.zero_grad()
