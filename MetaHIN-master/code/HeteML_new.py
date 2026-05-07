@@ -148,6 +148,7 @@ class HML(torch.nn.Module):
 
             query_set_y_pred = self.meta_learner(query_user_emb, query_item_emb, query_mp_enhanced_user_emb,
                                                  vars_dict=mp_task_fast_weights)
+            query_set_y_pred = query_set_y_pred.view(-1)
             q_loss = F.mse_loss(query_set_y_pred, query_set_y)
             mp_task_loss_s[mp] = q_loss.data  # movielens: 0.8126 dbook 0.6084
             # mp_task_loss_s[mp] = loss.data  # dbook 0.6144
@@ -161,6 +162,7 @@ class HML(torch.nn.Module):
         # agg_mp_emb = torch.stack(support_mp_enhanced_user_emb_s, 1)
         query_agg_enhanced_user_emb = torch.sum(agg_mp_emb * mp_att.unsqueeze(1), 1)
         query_y_pred = self.meta_learner(query_user_emb, query_item_emb, query_agg_enhanced_user_emb, vars_dict=agg_task_fast_weights)
+        query_y_pred = query_y_pred.view(-1)
 
         loss = F.mse_loss(query_y_pred, query_set_y)
         query_y_real = query_set_y.data.cpu().numpy()
@@ -210,6 +212,7 @@ class HML(torch.nn.Module):
         task_fast_weights = self.forward(support_user_emb, support_item_emb, support_set_y,
                                          support_agg_enhanced_user_emb)
         query_y_pred = self.meta_learner(query_user_emb, query_item_emb, query_agg_enhanced_user_emb, vars_dict=task_fast_weights)
+        query_y_pred = query_y_pred.view(-1)
         loss = F.mse_loss(query_y_pred, query_set_y)
         query_y_real = query_set_y.data.cpu().numpy()
         query_y_pred = query_y_pred.data.cpu().numpy()
@@ -247,6 +250,7 @@ class HML(torch.nn.Module):
                                              support_mp_enhanced_user_emb)
             query_y_pred = self.meta_learner(query_user_emb, query_item_emb, query_mp_enhanced_user_emb,
                                              vars_dict=task_fast_weights)
+            query_y_pred = query_y_pred.view(-1)
             loss = F.mse_loss(query_y_pred, query_set_y)
             mae, rmse = self.cal_metrics.prediction(query_set_y.data.cpu().numpy(),
                                                     query_y_pred.data.cpu().numpy())
