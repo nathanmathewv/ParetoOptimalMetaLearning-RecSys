@@ -2,6 +2,8 @@ import torch
 import torch.nn.functional as F
 from tqdm import tqdm
 import logging
+import json
+import os
 from utils.data_loader import get_dataloader
 from models.hete_ml import FairMetaHIN
 from utils.losses import get_accuracy_loss, get_user_fairness_loss, get_item_fairness_loss, get_path_fairness_loss
@@ -15,9 +17,8 @@ logging.basicConfig(
         logging.StreamHandler()
     ]
 )
-
 def train(config, data_dir, epochs=5):
-    device = torch.device("cuda" if config.get('use_cuda', False) else "cpu")
+    device = torch.device("cuda" if config.get('use_cuda', False) and torch.cuda.is_available() else "cpu")
     
     # Initialize Model
     model = FairMetaHIN(config).to(device)
@@ -140,29 +141,20 @@ def train(config, data_dir, epochs=5):
             total_loss += final_loss.item()
             
         logging.info(f"Epoch {epoch+1} completed. Avg Loss: {total_loss / len(dataloader):.4f}")
+        
+        # Save model weights
+        os.makedirs("models", exist_ok=True)
+        model_save_path = os.path.join("models", f"{config.get('dataset', 'movielens')}_pareto_epoch_{epoch+1}.pth")
+        torch.save(model.state_dict(), model_save_path)
+        logging.info(f"Model weights saved to {model_save_path}")
+        
+        latest_path = os.path.join("models", f"{config.get('dataset', 'movielens')}_pareto_latest.pth")
+        torch.save(model.state_dict(), latest_path)
 
 if __name__ == "__main__":
-    config = {
-        'dataset': 'movielens',
-        'embedding_dim': 32,
-        'item_embedding_dim': 64,
-        'user_embedding_dim': 128,
-        'first_fc_hidden_dim': 64,
-        'second_fc_hidden_dim': 64,
-        'item_fea_len': 26,
-        'num_rate': 6,
-        'num_genre': 25,
-        'num_gender': 2,
-        'num_age': 7,
-        'num_occupation': 21,
-        'num_zipcode': 3402,
-        'use_cuda': torch.cuda.is_available(),
-        'mp': ['UM', 'UMUM', 'UMAM', 'UMDM'],
-        'mp_update': 1,
-        'local_update': 1,
-        'lr': 0.001,
-        'mp_lr': 0.001,
-        'local_lr': 0.001,
-        'batch_size': 16
-    }
-    train(config, data_dir='data/movielens')
+    with open('config.json', 'r') as f:
+        config = json.load(f)
+        
+    # Remove forced override so it respects config.json
+    
+    train(config, data_dir=config.get('data_dir', 'data/movielens'), epochs=config.get('epochs', 5))

@@ -18,8 +18,7 @@ torch.manual_seed(13)
 
 def training(model, model_save=True, model_file=None, device='cpu'):
     print('training model...')
-    if config['use_cuda']:
-        model.cuda()
+    model.to(device)
     model.train()
 
     batch_size = config['batch_size']
@@ -63,8 +62,7 @@ def training(model, model_save=True, model_file=None, device='cpu'):
 def testing(model, device='cpu'):
     # testing
     print('evaluating model...')
-    if config['use_cuda']:
-        model.cuda()
+    model.to(device)
     model.eval()
     for state in states:
         if state == 'meta_training':
@@ -120,7 +118,7 @@ if __name__ == "__main__":
         from Config import config_yelp as config
     elif data_set == 'dbook':
         from Config import config_db as config
-    cuda_or_cpu = torch.device("cuda" if config['use_cuda'] else "cpu")
+    cuda_or_cpu = torch.device("cuda" if config.get('use_cuda', False) and torch.cuda.is_available() else "cpu")
     print (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
     print(config)
 

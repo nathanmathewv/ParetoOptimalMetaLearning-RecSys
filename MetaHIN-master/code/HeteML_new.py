@@ -14,7 +14,7 @@ class HML(torch.nn.Module):
         super(HML, self).__init__()
         self.config = config
         self.use_cuda = self.config['use_cuda']
-        self.device = torch.device("cuda" if config['use_cuda'] else "cpu")
+        self.device = torch.device("cuda" if self.config.get('use_cuda', False) and torch.cuda.is_available() else "cpu")
         self.model_name = model_name
 
         if self.config['dataset'] == 'movielens':
