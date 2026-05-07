@@ -63,7 +63,19 @@ def evaluate_model(model_type='pareto', config_path='config.json'):
             model.load_state_dict(trained_state_dict)
             print(f"Loaded Original model from {model_path}")
         else:
-            print(f"Warning: {model_path} not found. Evaluating with random weights.")
+            import sys
+            sys.path.append('MetaHIN-master/code')
+            from HeteML_new import HML
+            model = HML(config, 'hml').to(device)
+            
+            # Load from our new trained weights
+            model_path = os.path.join("models", f"{config.get('dataset', 'movielens')}_original_latest.pth")
+            if os.path.exists(model_path):
+                model.load_state_dict(torch.load(model_path, map_location=device))
+            else:
+                logging.warning(f"Could not find weights at {model_path}. You may need to train the original model first.")
+            model.eval()
+            print(f"Loaded Original model from {model_path}")
     else:
         raise ValueError("Invalid model type")
 
