@@ -13,7 +13,7 @@ class HML(torch.nn.Module):
     def __init__(self, config, model_name):
         super(HML, self).__init__()
         self.config = config
-        self.use_cuda = self.config['use_cuda']
+        self.use_cuda = self.config.get('use_cuda', False)
         self.device = torch.device("cuda" if self.config.get('use_cuda', False) and torch.cuda.is_available() else "cpu")
         self.model_name = model_name
 
