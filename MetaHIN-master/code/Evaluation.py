@@ -11,6 +11,8 @@ class Evaluation:
         self.k = 5
 
     def prediction(self, real_score, pred_score):
+        real_score = np.reshape(real_score, -1)
+        pred_score = np.reshape(pred_score, -1)
         MAE = mean_absolute_error(real_score, pred_score)
         RMSE = math.sqrt(mean_squared_error(real_score, pred_score))
         return MAE, RMSE
@@ -24,6 +26,8 @@ class Evaluation:
         return (self.dcg_at_k(predicted_scores) / idcg) if idcg > 0.0 else 0.0
 
     def ranking(self, real_score, pred_score, k):
+        real_score = np.reshape(real_score, -1)
+        pred_score = np.reshape(pred_score, -1)
         # ndcg@k
         sorted_idx = sorted(np.argsort(real_score)[::-1][:k])  # get the index of the top k real score
         r_s_at_k = real_score[sorted_idx]
