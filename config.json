@@ -13,7 +13,12 @@
     "num_age": 7,
     "num_occupation": 21,
     "num_zipcode": 3402,
-    "mp": ["UM", "UMUM", "UMAM", "UMDM"],
+    "mp": [
+        "UM",
+        "UMUM",
+        "UMAM",
+        "UMDM"
+    ],
     "mp_update": 1,
     "local_update": 1,
     "lr": 0.001,
@@ -21,5 +26,5 @@
     "local_lr": 0.001,
     "batch_size": 16,
     "epochs": 5,
-    "use_cuda": false
+    "use_cuda": true
 }
