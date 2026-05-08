@@ -5,6 +5,7 @@ import torch
 import numpy as np
 import math
 import sys
+import logging
 
 from utils.data_loader import get_dataloader
 from models.hete_ml import FairMetaHIN
@@ -45,37 +46,18 @@ def evaluate_model(model_type='pareto', config_path='config.json'):
         else:
             print(f"Warning: {model_path} not found. Evaluating with random weights.")
     elif model_type == 'original':
-        sys.path.insert(0, os.path.join('MetaHIN-master', 'code'))
-        if config['dataset'] == 'movielens':
-            from Config import config_ml as orig_config
-        elif config['dataset'] == 'yelp':
-            from Config import config_yelp as orig_config
-        else:
-            from Config import config_db as orig_config
-            
+        sys.path.append('MetaHIN-master/code')
         from HeteML_new import HML
-        model = HML(orig_config, 'mp_update')
-        model.to(device)
-            
-        model_path = os.path.join('MetaHIN-master', 'res', config['dataset'], 'hml.pkl')
+        model = HML(config, 'hml').to(device)
+        
+        # Load from our new trained weights
+        model_path = os.path.join("models", f"{config.get('dataset', 'movielens')}_original_latest.pth")
         if os.path.exists(model_path):
-            trained_state_dict = torch.load(model_path, map_location=device)
-            model.load_state_dict(trained_state_dict)
-            print(f"Loaded Original model from {model_path}")
+            model.load_state_dict(torch.load(model_path, map_location=device))
         else:
-            import sys
-            sys.path.append('MetaHIN-master/code')
-            from HeteML_new import HML
-            model = HML(config, 'hml').to(device)
-            
-            # Load from our new trained weights
-            model_path = os.path.join("models", f"{config.get('dataset', 'movielens')}_original_latest.pth")
-            if os.path.exists(model_path):
-                model.load_state_dict(torch.load(model_path, map_location=device))
-            else:
-                logging.warning(f"Could not find weights at {model_path}. You may need to train the original model first.")
-            model.eval()
-            print(f"Loaded Original model from {model_path}")
+            logging.warning(f"Could not find weights at {model_path}. You may need to train the original model first.")
+        model.eval()
+        print(f"Loaded Original model from {model_path}")
     else:
         raise ValueError("Invalid model type")
 
@@ -144,8 +126,8 @@ def evaluate_model(model_type='pareto', config_path='config.json'):
                     if supp_x.shape[0] == 0 or query_x.shape[0] == 0:
                         continue
                         
-                    supp_mp_list = [task['supp_mp'][mp_name] for mp_name in orig_config['mp']]
-                    query_mp_list = [task['query_mp'][mp_name] for mp_name in orig_config['mp']]
+                    supp_mp_list = [task['supp_mp'][mp_name] for mp_name in config['mp']]
+                    query_mp_list = [task['query_mp'][mp_name] for mp_name in config['mp']]
                     
                     try:
                         # model.evaluation returns mae, rmse, ndcg_5 for a single task
@@ -182,7 +164,7 @@ def evaluate_model(model_type='pareto', config_path='config.json'):
     for state, res in all_results.items():
         print(f"State: {state}")
         for k, v in res.items():
-            print(f"  {k}: {v:.4f}")
+            print(f"  {k}: {v:.6f}")
             
     return all_results
 

@@ -3,3 +3,12 @@
 2026-05-07 14:04:49,106 [INFO] Starting training...
 2026-05-07 15:04:44,271 [INFO] Epoch 1 completed. Avg Loss: 0.0044
 2026-05-07 15:04:44,277 [INFO] Model weights saved to models/movielens_pareto_epoch_1.pth
+2026-05-07 16:04:52,319 [INFO] Epoch 2 completed. Avg Loss: 0.0016
+2026-05-07 16:04:52,325 [INFO] Model weights saved to models/movielens_pareto_epoch_2.pth
+2026-05-07 16:59:13,907 [INFO] Epoch 3 completed. Avg Loss: 0.0001
+2026-05-07 16:59:13,915 [INFO] Model weights saved to models/movielens_pareto_epoch_3.pth
+2026-05-07 17:58:39,572 [INFO] Epoch 4 completed. Avg Loss: 0.0001
+2026-05-07 17:58:39,580 [INFO] Model weights saved to models/movielens_pareto_epoch_4.pth
+2026-05-07 18:53:14,330 [INFO] Epoch 5 completed. Avg Loss: 0.0000
+2026-05-07 18:53:14,450 [INFO] Model weights saved to models/movielens_pareto_epoch_5.pth
+2026-05-08 10:33:25,547 [INFO] Starting training for pareto model...

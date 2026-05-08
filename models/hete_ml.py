@@ -40,7 +40,7 @@ class FairMetaHIN(torch.nn.Module):
 
         support_set_y_pred = self.meta_learner(support_user_emb, support_item_emb, support_mp_user_emb, vars_dict)
         loss = F.mse_loss(support_set_y_pred.view(-1), support_set_y.view(-1))
-        grad = torch.autograd.grad(loss, vars_dict.values(), create_graph=False, allow_unused=True)
+        grad = torch.autograd.grad(loss, vars_dict.values(), create_graph=True)
 
         fast_weights = {}
         for i, w in enumerate(vars_dict.keys()):
@@ -52,7 +52,7 @@ class FairMetaHIN(torch.nn.Module):
         for idx in range(1, self.config.get('local_update', 1)):
             support_set_y_pred = self.meta_learner(support_user_emb, support_item_emb, support_mp_user_emb, vars_dict=fast_weights)
             loss = F.mse_loss(support_set_y_pred.view(-1), support_set_y.view(-1))
-            grad = torch.autograd.grad(loss, fast_weights.values(), create_graph=False, allow_unused=True)
+            grad = torch.autograd.grad(loss, fast_weights.values(), create_graph=True)
 
             for i, w in enumerate(fast_weights.keys()):
                 if grad[i] is not None:
@@ -73,6 +73,7 @@ class FairMetaHIN(torch.nn.Module):
         support_mp_enhanced_user_emb_s, query_mp_enhanced_user_emb_s = [], []
         mp_task_fast_weights_s = {}
         mp_task_loss_s = {}
+        mp_task_loss_diff_s = {}  # Differentiable losses for L_path (paper Eq. 13)
         
         mp_initial_weights = self.mp_learner.update_parameters()
         ml_initial_weights = self.meta_learner.update_parameters()
@@ -92,7 +93,7 @@ class FairMetaHIN(torch.nn.Module):
             # Meta-path learner update
             support_set_y_pred = self.meta_learner(support_user_emb, support_item_emb, support_mp_enhanced_user_emb)
             loss = F.mse_loss(support_set_y_pred.view(-1), support_y.view(-1))
-            grad = torch.autograd.grad(loss, mp_initial_weights.values(), create_graph=False, allow_unused=True)
+            grad = torch.autograd.grad(loss, mp_initial_weights.values(), create_graph=True)
             
             fast_weights = {}
             for i in range(self.mp_weight_len):
@@ -106,7 +107,7 @@ class FairMetaHIN(torch.nn.Module):
                 support_mp_enhanced_user_emb = self.mp_learner(support_user_emb, support_item_emb, support_neighs_emb, mp, support_index_list, vars_dict=fast_weights)
                 support_set_y_pred = self.meta_learner(support_user_emb, support_item_emb, support_mp_enhanced_user_emb)
                 loss = F.mse_loss(support_set_y_pred.view(-1), support_y.view(-1))
-                grad = torch.autograd.grad(loss, fast_weights.values(), create_graph=False, allow_unused=True)
+                grad = torch.autograd.grad(loss, fast_weights.values(), create_graph=True)
                 for i in range(self.mp_weight_len):
                     weight_name = self.mp_weight_name[i]
                     if grad[i] is not None:
@@ -119,6 +120,12 @@ class FairMetaHIN(torch.nn.Module):
             support_mp_enhanced_user_emb_s.append(support_mp_enhanced_user_emb)
             query_mp_enhanced_user_emb_s.append(query_mp_enhanced_user_emb)
             
+            # Differentiable support loss for L_path (paper Eq. 13: L_p(θ))
+            # Uses adapted mp_learner + initial meta_learner (non-degenerate, no query leak)
+            diff_pred = self.meta_learner(support_user_emb, support_item_emb, support_mp_enhanced_user_emb)
+            diff_loss = F.mse_loss(diff_pred.view(-1), support_y.view(-1))
+            mp_task_loss_diff_s[mp] = diff_loss
+            
             # Transformer for meta-learner init
             f_fast_weights = {}
             for w, liner in self.transformer_liners.items():
@@ -130,29 +137,35 @@ class FairMetaHIN(torch.nn.Module):
             mp_task_fast_weights = self.inner_update(support_user_emb, support_item_emb, support_y, support_mp_enhanced_user_emb, vars_dict=f_fast_weights)
             mp_task_fast_weights_s[mp] = mp_task_fast_weights
             
-            # Query loss for attention
+            # Query loss for attention (detached via .data to prevent data leak, matching original MetaHIN)
             query_set_y_pred = self.meta_learner(query_user_emb, query_item_emb, query_mp_enhanced_user_emb, vars_dict=mp_task_fast_weights)
             q_loss = F.mse_loss(query_set_y_pred.view(-1), query_y.view(-1))
-            mp_task_loss_s[mp] = q_loss
+            mp_task_loss_s[mp] = q_loss.data
             
-        # Attention across meta-paths (Exposure_p)
+        # === Attention for weight aggregation (detached, matching original MetaHIN) ===
         mp_loss_stack = torch.stack(list(mp_task_loss_s.values()))
-        mp_att = F.softmax(-mp_loss_stack, dim=0)
+        mp_att_agg = F.softmax(-mp_loss_stack, dim=0)
         
-        # Aggregate weights
+        # === Differentiable attention for L_path (paper Eq. 10-11) ===
+        # a_{u,i,p}(θ) = exp(-L_p(θ)) / Σ exp(-L_{p'}(θ))  [Eq. 13]
+        mp_loss_stack_diff = torch.stack([mp_task_loss_diff_s[mp] for mp in self.config['mp']])
+        mp_att_diff = F.softmax(-mp_loss_stack_diff, dim=0)
+        
+        # Aggregate weights using detached attention (proven MetaHIN mechanism)
         agg_task_fast_weights = {}
         for idx, mp in enumerate(self.config['mp']):
             if idx == 0:
-                agg_task_fast_weights = {k: v * mp_att[idx] for k, v in mp_task_fast_weights_s[mp].items()}
+                agg_task_fast_weights = {k: v * mp_att_agg[idx] for k, v in mp_task_fast_weights_s[mp].items()}
             else:
-                tmp_weights = {k: v * mp_att[idx] for k, v in mp_task_fast_weights_s[mp].items()}
+                tmp_weights = {k: v * mp_att_agg[idx] for k, v in mp_task_fast_weights_s[mp].items()}
                 for k in agg_task_fast_weights:
                     agg_task_fast_weights[k] += tmp_weights[k]
                     
-        # Final prediction
+        # Final prediction using detached attention for embedding aggregation
         agg_mp_emb = torch.stack(query_mp_enhanced_user_emb_s, 1)
-        query_agg_enhanced_user_emb = torch.sum(agg_mp_emb * mp_att.unsqueeze(1), 1)
+        query_agg_enhanced_user_emb = torch.sum(agg_mp_emb * mp_att_agg.unsqueeze(1), 1)
         
         query_y_pred = self.meta_learner(query_user_emb, query_item_emb, query_agg_enhanced_user_emb, vars_dict=agg_task_fast_weights)
         
-        return query_y_pred, mp_att
+        # Return differentiable attention for L_path computation in trainer
+        return query_y_pred, mp_att_diff

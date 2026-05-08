@@ -40,6 +40,7 @@ def train(config, data_dir, epochs=5, model_type='pareto'):
     for epoch in range(epochs):
         model.train()
         total_loss = 0.0
+        num_batches = 0
         
         for batch in tqdm(dataloader, desc=f"Epoch {epoch+1}/{epochs}"):
             optimizer.zero_grad()
@@ -88,7 +89,7 @@ def train(config, data_dir, epochs=5, model_type='pareto'):
                 L_user = torch.abs(avg_male_g - avg_female_g)
     
                 losses = [L_acc, L_user, L_item, L_path]
-                active_losses = [l for l in losses if l.requires_grad and l.item() > 0]
+                active_losses = [l for l in losses if l.requires_grad]
                 if len(active_losses) == 0:
                     continue
                     
@@ -116,6 +117,7 @@ def train(config, data_dir, epochs=5, model_type='pareto'):
                 final_loss.backward()
                 optimizer.step()
                 total_loss += final_loss.item()
+                num_batches += 1
                 
             else:
                 task_losses = []
@@ -142,7 +144,8 @@ def train(config, data_dir, epochs=5, model_type='pareto'):
                 optimizer.step()
                 total_loss += final_loss.item()
             
-        logging.info(f"Epoch {epoch+1} completed. Avg Loss: {total_loss / len(dataloader):.4f}")
+        avg_loss = total_loss / max(num_batches, 1)
+        logging.info(f"Epoch {epoch+1} completed. Avg Loss: {avg_loss:.6f} ({num_batches}/{len(dataloader)} batches processed)")
         
         # Save model weights
         os.makedirs("models", exist_ok=True)
