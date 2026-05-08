@@ -139,7 +139,7 @@ def evaluate_model(model_type='pareto', config_path='config.json'):
                         rmse_list.append(_rmse)
                         ndcg_list.append(_ndcg_5)
                     except Exception as e:
-                        pass
+                        logging.error(f"Error evaluating original model task: {e}")
 
         if model_type == 'pareto' and user_fairness_list:
             male_mses = [item['mse'] for item in user_fairness_list if item['gender'] == 0]

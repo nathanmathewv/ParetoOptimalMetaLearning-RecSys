@@ -103,6 +103,8 @@ def train(config, data_dir, epochs=5, model_type='pareto'):
                     for p in model.parameters():
                         if p.grad is not None:
                             g.append(p.grad.view(-1))
+                        else:
+                            g.append(torch.zeros_like(p).view(-1))
                     if g:
                         grads.append(torch.cat(g))
                         valid_losses.append(l)
