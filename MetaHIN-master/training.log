@@ -1,0 +1,17 @@
+2026-05-07 13:55:41,715 [INFO] Starting training...
+2026-05-07 13:58:30,254 [INFO] Starting training...
+2026-05-07 14:04:49,106 [INFO] Starting training...
+2026-05-07 15:04:44,271 [INFO] Epoch 1 completed. Avg Loss: 0.0044
+2026-05-07 15:04:44,277 [INFO] Model weights saved to models/movielens_pareto_epoch_1.pth
+2026-05-07 09:52:35,308 [INFO] NumExpr defaulting to 4 threads.
+2026-05-07 09:52:42,819 [INFO] Starting training for original model...
+2026-05-07 10:24:01,470 [INFO] Epoch 1 completed. Avg Loss: 1.9916
+2026-05-07 10:24:01,484 [INFO] Model weights saved to models/movielens_original_epoch_1.pth
+2026-05-07 10:55:06,534 [INFO] Epoch 2 completed. Avg Loss: 1.0005
+2026-05-07 10:55:06,542 [INFO] Model weights saved to models/movielens_original_epoch_2.pth
+2026-05-07 11:26:20,078 [INFO] Epoch 3 completed. Avg Loss: 0.9824
+2026-05-07 11:26:20,090 [INFO] Model weights saved to models/movielens_original_epoch_3.pth
+2026-05-07 11:57:42,567 [INFO] Epoch 4 completed. Avg Loss: 0.9700
+2026-05-07 11:57:42,574 [INFO] Model weights saved to models/movielens_original_epoch_4.pth
+2026-05-07 12:29:11,076 [INFO] Epoch 5 completed. Avg Loss: 0.9572
+2026-05-07 12:29:11,086 [INFO] Model weights saved to models/movielens_original_epoch_5.pth
