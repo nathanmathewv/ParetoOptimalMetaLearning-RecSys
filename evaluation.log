@@ -1,0 +1,7 @@
+2026-05-09 16:40:56,995 [INFO] Loaded pareto checkpoint: models/movielens_pareto_latest.pth
+2026-05-09 16:40:56,995 [INFO]   → state: warm_up
+2026-05-09 16:41:46,392 [INFO]   → state: user_cold_testing
+2026-05-09 16:48:58,927 [INFO] Loaded pareto weights from models/movielens_pareto_latest.pth
+2026-05-09 16:48:58,928 [INFO]   → warm_up
+2026-05-09 16:50:15,311 [INFO] Loaded pareto weights from models/movielens_pareto_epoch_5.pth
+2026-05-09 16:50:15,311 [INFO]   → warm_up

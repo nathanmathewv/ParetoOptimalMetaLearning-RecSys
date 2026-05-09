@@ -1,0 +1,11 @@
+2026-05-09 17:01:06,419 [INFO] Model: pareto | Epoch: latest | Checkpoint: models/movielens_pareto_latest.pth
+2026-05-09 17:01:06,425 [INFO] Loaded pareto weights from models/movielens_pareto_latest.pth
+2026-05-09 17:01:06,425 [INFO] Evaluating: warm_up
+2026-05-09 17:01:19,446 [INFO]   [warm_up] batch 50/287  n=720  MAE=0.8310  RMSE=0.9057  NDCG@5=0.6122
+2026-05-09 17:01:25,991 [INFO]   [warm_up] batch 100/287  n=1452  MAE=0.8257  RMSE=0.8983  NDCG@5=0.6094
+2026-05-09 17:01:33,532 [INFO]   [warm_up] batch 150/287  n=2197  MAE=0.8300  RMSE=0.9044  NDCG@5=0.6183
+2026-05-09 17:01:41,333 [INFO]   [warm_up] batch 200/287  n=2932  MAE=0.8295  RMSE=0.9044  NDCG@5=0.6255
+2026-05-09 17:01:48,075 [INFO]   [warm_up] batch 250/287  n=3666  MAE=0.8346  RMSE=0.9100  NDCG@5=0.6273
+2026-05-09 17:01:53,572 [INFO]   [warm_up] batch 287/287  n=4215  MAE=0.8339  RMSE=0.9096  NDCG@5=0.6304
+2026-05-09 17:01:54,037 [INFO]   ✓ warm_up  (4215 tasks)  MAE=0.8339 | RMSE=0.9096 | NDCG@5=0.6304 | User_Fairness_Gap=0.0013 | Path_Exposure_Var=0.3795
+2026-05-09 17:01:54,037 [INFO] Evaluating: user_cold_testing
