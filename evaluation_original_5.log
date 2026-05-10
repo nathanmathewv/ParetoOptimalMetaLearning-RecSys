@@ -1,0 +1,26 @@
+2026-05-09 15:53:00,578 [INFO] Loaded: MetaHIN-master/original_model_weights/movielens_original_epoch_5.pth
+2026-05-09 15:53:00,579 [INFO] Evaluating: warm_up
+2026-05-09 15:53:50,011 [INFO]   [warm_up] batch 50/287  n=720  MAE=0.7053  RMSE=0.7804  NDCG@5=0.9584
+2026-05-09 15:54:30,631 [INFO]   [warm_up] batch 100/287  n=1452  MAE=0.7143  RMSE=0.7887  NDCG@5=0.9626
+2026-05-09 15:55:18,560 [INFO]   [warm_up] batch 150/287  n=2197  MAE=0.7164  RMSE=0.7937  NDCG@5=0.9632
+2026-05-09 15:56:07,170 [INFO]   [warm_up] batch 200/287  n=2932  MAE=0.7159  RMSE=0.7947  NDCG@5=0.9595
+2026-05-09 15:56:50,543 [INFO]   [warm_up] batch 250/287  n=3666  MAE=0.7191  RMSE=0.7984  NDCG@5=0.9589
+2026-05-09 15:57:24,225 [INFO]   [warm_up] batch 287/287  n=4215  MAE=0.7228  RMSE=0.8020  NDCG@5=0.9581
+2026-05-09 15:57:24,291 [INFO]   ✓ warm_up (4215 tasks)  MAE=0.7228 | RMSE=0.8020 | NDCG@5=0.9581
+2026-05-09 15:57:24,291 [INFO] Evaluating: user_cold_testing
+2026-05-09 16:02:21,985 [INFO]   [user_cold_testing] batch 50/76  n=800  MAE=0.7878  RMSE=0.9428  NDCG@5=0.8396
+2026-05-09 16:04:53,472 [INFO]   [user_cold_testing] batch 76/76  n=1208  MAE=0.7861  RMSE=0.9426  NDCG@5=0.8359
+2026-05-09 16:04:53,593 [INFO]   ✓ user_cold_testing (1208 tasks)  MAE=0.7861 | RMSE=0.9426 | NDCG@5=0.8359
+2026-05-09 16:04:53,593 [INFO] Evaluating: item_cold_testing
+2026-05-09 16:06:42,379 [INFO]   [item_cold_testing] batch 50/299  n=786  MAE=0.8942  RMSE=1.0165  NDCG@5=0.8134
+2026-05-09 16:08:00,983 [INFO]   [item_cold_testing] batch 100/299  n=1562  MAE=0.8724  RMSE=0.9871  NDCG@5=0.8236
+2026-05-09 16:09:34,434 [INFO]   [item_cold_testing] batch 150/299  n=2347  MAE=0.8816  RMSE=0.9990  NDCG@5=0.8244
+2026-05-09 16:11:05,368 [INFO]   [item_cold_testing] batch 200/299  n=3123  MAE=0.8846  RMSE=1.0011  NDCG@5=0.8274
+2026-05-09 16:12:24,284 [INFO]   [item_cold_testing] batch 250/299  n=3909  MAE=0.8800  RMSE=0.9947  NDCG@5=0.8330
+2026-05-09 16:13:42,979 [INFO]   [item_cold_testing] batch 299/299  n=4663  MAE=0.8835  RMSE=0.9981  NDCG@5=0.8353
+2026-05-09 16:13:43,055 [INFO]   ✓ item_cold_testing (4663 tasks)  MAE=0.8835 | RMSE=0.9981 | NDCG@5=0.8353
+2026-05-09 16:13:43,055 [INFO] Evaluating: user_and_item_cold_testing
+2026-05-09 16:15:17,428 [INFO]   [user_and_item_cold_testing] batch 50/75  n=786  MAE=0.8862  RMSE=0.9963  NDCG@5=0.8332
+2026-05-09 16:16:05,844 [INFO]   [user_and_item_cold_testing] batch 75/75  n=1174  MAE=0.8919  RMSE=1.0071  NDCG@5=0.8255
+2026-05-09 16:16:05,908 [INFO]   ✓ user_and_item_cold_testing (1174 tasks)  MAE=0.8919 | RMSE=1.0071 | NDCG@5=0.8255
+2026-05-09 16:16:05,969 [INFO] Saved → results_original_5.json  |  Log → evaluation_original_5.log

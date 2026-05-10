@@ -1,0 +1,26 @@
+2026-05-09 13:24:52,788 [INFO] Loaded: models/movielens_pareto_epoch_5.pth
+2026-05-09 13:24:52,789 [INFO] Evaluating: warm_up
+2026-05-09 13:25:48,627 [INFO]   [warm_up] batch 50/287  n=720  MAE=0.8296  RMSE=0.9047  NDCG@5=0.6125
+2026-05-09 13:26:33,948 [INFO]   [warm_up] batch 100/287  n=1452  MAE=0.8253  RMSE=0.8979  NDCG@5=0.6096
+2026-05-09 13:27:28,774 [INFO]   [warm_up] batch 150/287  n=2197  MAE=0.8297  RMSE=0.9042  NDCG@5=0.6179
+2026-05-09 13:28:22,454 [INFO]   [warm_up] batch 200/287  n=2932  MAE=0.8286  RMSE=0.9036  NDCG@5=0.6254
+2026-05-09 13:29:11,715 [INFO]   [warm_up] batch 250/287  n=3666  MAE=0.8338  RMSE=0.9093  NDCG@5=0.6273
+2026-05-09 13:29:48,641 [INFO]   [warm_up] batch 287/287  n=4215  MAE=0.8330  RMSE=0.9087  NDCG@5=0.6306
+2026-05-09 13:29:48,701 [INFO]   ✓ warm_up (4215 tasks)  MAE=0.8330 | RMSE=0.9087 | NDCG@5=0.6306 | User_Fairness_Gap=0.0094 | Path_Exposure_Var=0.5280
+2026-05-09 13:29:48,701 [INFO] Evaluating: user_cold_testing
+2026-05-09 13:35:49,513 [INFO]   [user_cold_testing] batch 50/76  n=800  MAE=0.8865  RMSE=1.0262  NDCG@5=0.8520
+2026-05-09 13:39:04,761 [INFO]   [user_cold_testing] batch 76/76  n=1208  MAE=0.8861  RMSE=1.0270  NDCG@5=0.8459
+2026-05-09 13:39:04,925 [INFO]   ✓ user_cold_testing (1208 tasks)  MAE=0.8861 | RMSE=1.0270 | NDCG@5=0.8459 | User_Fairness_Gap=0.0362 | Path_Exposure_Var=0.0006
+2026-05-09 13:39:04,925 [INFO] Evaluating: item_cold_testing
+2026-05-09 13:41:12,649 [INFO]   [item_cold_testing] batch 50/299  n=786  MAE=0.9518  RMSE=1.0732  NDCG@5=0.7867
+2026-05-09 13:42:44,137 [INFO]   [item_cold_testing] batch 100/299  n=1562  MAE=0.9398  RMSE=1.0523  NDCG@5=0.7798
+2026-05-09 13:44:36,987 [INFO]   [item_cold_testing] batch 150/299  n=2347  MAE=0.9505  RMSE=1.0656  NDCG@5=0.7797
+2026-05-09 13:46:22,140 [INFO]   [item_cold_testing] batch 200/299  n=3123  MAE=0.9546  RMSE=1.0689  NDCG@5=0.7841
+2026-05-09 13:47:55,002 [INFO]   [item_cold_testing] batch 250/299  n=3909  MAE=0.9501  RMSE=1.0623  NDCG@5=0.7832
+2026-05-09 13:49:25,412 [INFO]   [item_cold_testing] batch 299/299  n=4663  MAE=0.9532  RMSE=1.0659  NDCG@5=0.7863
+2026-05-09 13:49:25,499 [INFO]   ✓ item_cold_testing (4663 tasks)  MAE=0.9532 | RMSE=1.0659 | NDCG@5=0.7863 | User_Fairness_Gap=0.0470 | Path_Exposure_Var=0.1553
+2026-05-09 13:49:25,499 [INFO] Evaluating: user_and_item_cold_testing
+2026-05-09 13:51:14,069 [INFO]   [user_and_item_cold_testing] batch 50/75  n=786  MAE=0.9671  RMSE=1.0750  NDCG@5=0.8270
+2026-05-09 13:52:13,943 [INFO]   [user_and_item_cold_testing] batch 75/75  n=1174  MAE=0.9628  RMSE=1.0748  NDCG@5=0.8173
+2026-05-09 13:52:14,006 [INFO]   ✓ user_and_item_cold_testing (1174 tasks)  MAE=0.9628 | RMSE=1.0748 | NDCG@5=0.8173 | User_Fairness_Gap=0.0407 | Path_Exposure_Var=0.0046
+2026-05-09 13:52:14,071 [INFO] Saved → results_pareto_5.json  |  Log → evaluation_pareto_5.log
