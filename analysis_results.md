@@ -129,13 +129,13 @@ The **Original MetaHIN** consistently outperforms the Pareto model on MAE and RM
 
 On **NDCG@5**, the two models are actually virtually identical! The previously anomalous 1.0+ ranking metrics from the Original model have been corrected. Both models sit around ~0.63 in warm-up, ~0.85 in user-cold, and ~0.80 in item-cold scenarios. The Original model has extremely minor NDCG leads (+0.002 to +0.012) across the board.
 
-### Fairness: Pareto Delivers on Its Promise
+### Fairness: Pareto Achieves Perfect Path Balance
 
-While both models achieve comparable **User Fairness Gaps** (gender bias) and **Item Fairness Gaps** (popularity bias), the **Path Exposure Variance** tells the real story. 
+While both models achieve comparable **User Fairness Gaps** (gender bias) and **Item Fairness Gaps** (popularity bias), the **Path Exposure Variance** highlights a difference in how meta-paths are utilized.
 
-The baseline Original model suffers from catastrophic meta-path collapse, with variances scaling into the tens of thousands (e.g. `27478.12` in Item-Cold). This means it heavily over-indexes on a single meta-path and ignores the rest of the heterogeneous information network. 
+At first glance, the Original model's Path Exposure Variance appears massive (e.g., `26915` in Item-Cold). However, because the metric sums exposure across thousands of tasks ($N=4663$), a variance of 26,915 equates to a standard deviation of just $\approx 164$. This means the Original model has a natural, slight imbalance in path preference (distributing attention roughly $\sim 36\% / 31\% / 33\%$). It does **not** suffer from catastrophic collapse.
 
-The Pareto model correctly applies MGDA to balance all paths, bringing the Path Exposure Variance down to near-zero levels (e.g., `0.0048` in User-Cold).
+The Pareto model, guided by MGDA, treats path exposures as competing objectives and enforces strict mathematical equality. It brings the variance down to near-zero levels (e.g., `0.3349` in Item-Cold), meaning it distributes attention with absolute uniformity across all paths (exactly $33.33\% \pm 0.01\%$).
 
 ### Training Dynamics
 
@@ -149,7 +149,7 @@ The Pareto model correctly applies MGDA to balance all paths, bringing the Path 
 | **Raw accuracy** | Original wins by ~5-10% on error metrics (MAE/RMSE) |
 | **Ranking (NDCG)** | Tied. Both models deliver nearly identical ranking quality |
 | **User fairness** | Both achieve near-zero gender disparity |
-| **Path balance** | Pareto perfectly balances paths; Original model completely collapses to a single path |
-| **Trade-off** | ~5-10% MAE/RMSE cost to prevent catastrophic meta-path collapse |
+| **Path balance** | Pareto perfectly balances paths ($33.33\%$ each); Original model has a slight natural imbalance |
+| **Trade-off** | ~5-10% MAE/RMSE cost to mathematically enforce perfect uniform path distribution |
 
-> **Tip:** The accuracy-fairness trade-off is a well-known phenomenon in fair ML. A ~5-10% prediction error cost to completely rescue the model's structural diversity and path fairness is an excellent trade-off!
+> **Tip:** The variance numbers look artificially large because `get_path_fairness_loss` calculates variance over the *sum* of attention weights across all tasks ($O(N^2)$), rather than the normalized average per task.
