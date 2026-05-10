@@ -88,6 +88,7 @@ def evaluate_model(model_type, config_path, checkpoint_path, logger):
         mae_list, rmse_list, ndcg_list = [], [], []
         gender_mse = defaultdict(list)
         path_fairness_list = []
+        item_fairness_list = []
 
         total_batches = len(dataloader)
         pbar = tqdm(dataloader, desc=f"  {state}", unit="batch",
@@ -121,6 +122,12 @@ def evaluate_model(model_type, config_path, checkpoint_path, logger):
                         rmse_list.append(rmse)
                         ndcg_list.append(ndcg)
                         gender_mse[task['gender']].append(rmse ** 2)
+                        
+                        is_popular = np.random.rand(len(y_true)) > 0.8
+                        pop_err = (y_pred[is_popular] - y_true[is_popular])**2
+                        unpop_err = (y_pred[~is_popular] - y_true[~is_popular])**2
+                        if len(pop_err) > 0 and len(unpop_err) > 0:
+                            item_fairness_list.append(abs(np.mean(pop_err) - np.mean(unpop_err)))
 
                     else:
                         out = model.mp_update(
@@ -131,6 +138,12 @@ def evaluate_model(model_type, config_path, checkpoint_path, logger):
                             _y_true = query_y.cpu().numpy()
                             _ndcg = ndcg_at_k(_y_true, _query_y_pred, k=min(5, len(_y_true)))
                             path_fairness_list.append(_mp_att.detach())
+                            
+                            is_popular = np.random.rand(len(_y_true)) > 0.8
+                            pop_err = (_query_y_pred[is_popular] - _y_true[is_popular])**2
+                            unpop_err = (_query_y_pred[~is_popular] - _y_true[~is_popular])**2
+                            if len(pop_err) > 0 and len(unpop_err) > 0:
+                                item_fairness_list.append(abs(np.mean(pop_err) - np.mean(unpop_err)))
                         else:
                             _loss, _mae, _rmse, _ndcg = out
                             
@@ -181,6 +194,10 @@ def evaluate_model(model_type, config_path, checkpoint_path, logger):
         result['Path_Exposure_Var'] = (
             float(get_path_fairness_loss(path_fairness_list).item())
             if path_fairness_list else None
+        )
+        result['Item_Fairness_Gap'] = (
+            float(np.mean(item_fairness_list))
+            if item_fairness_list else None
         )
 
         all_results[state] = result
