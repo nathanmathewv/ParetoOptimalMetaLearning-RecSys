@@ -1,27 +1,26 @@
-2026-05-10 17:35:32,829 [INFO] Model: original | Epoch: 3 | Checkpoint: MetaHIN-master\original_model_weights\movielens_original_epoch_3.pth
-2026-05-10 17:35:35,298 [INFO] Loaded original weights from MetaHIN-master\original_model_weights\movielens_original_epoch_3.pth
-2026-05-10 17:35:35,298 [INFO] Evaluating: warm_up
-2026-05-10 17:35:55,338 [INFO]   [warm_up] batch 50/287  n=720  MAE=0.7504  RMSE=0.8279  NDCG@5=0.6117
-2026-05-10 17:36:06,166 [INFO]   [warm_up] batch 100/287  n=1452  MAE=0.7550  RMSE=0.8314  NDCG@5=0.6079
-2026-05-10 17:36:18,103 [INFO]   [warm_up] batch 150/287  n=2197  MAE=0.7593  RMSE=0.8375  NDCG@5=0.6172
-2026-05-10 17:36:30,102 [INFO]   [warm_up] batch 200/287  n=2932  MAE=0.7609  RMSE=0.8408  NDCG@5=0.6253
-2026-05-10 17:36:41,339 [INFO]   [warm_up] batch 250/287  n=3666  MAE=0.7645  RMSE=0.8450  NDCG@5=0.6273
-2026-05-10 17:36:49,809 [INFO]   [warm_up] batch 287/287  n=4215  MAE=0.7661  RMSE=0.8465  NDCG@5=0.6303
-2026-05-10 17:36:50,351 [INFO] Evaluating: user_cold_testing
-2026-05-10 17:41:30,961 [INFO]   [user_cold_testing] batch 50/76  n=800  MAE=0.8042  RMSE=0.9569  NDCG@5=0.8611
-2026-05-10 17:43:58,135 [INFO]   [user_cold_testing] batch 76/76  n=1208  MAE=0.8042  RMSE=0.9586  NDCG@5=0.8562
-2026-05-10 17:43:58,728 [INFO] Evaluating: item_cold_testing
-2026-05-10 17:44:43,492 [INFO]   [item_cold_testing] batch 50/299  n=786  MAE=0.8994  RMSE=1.0234  NDCG@5=0.7945
-2026-05-10 17:45:01,628 [INFO]   [item_cold_testing] batch 100/299  n=1562  MAE=0.8843  RMSE=1.0008  NDCG@5=0.7856
-2026-05-10 17:45:28,553 [INFO]   [item_cold_testing] batch 150/299  n=2347  MAE=0.8902  RMSE=1.0094  NDCG@5=0.7853
-2026-05-10 17:45:52,551 [INFO]   [item_cold_testing] batch 200/299  n=3123  MAE=0.8935  RMSE=1.0123  NDCG@5=0.7902
-2026-05-10 17:46:12,926 [INFO]   [item_cold_testing] batch 250/299  n=3909  MAE=0.8909  RMSE=1.0078  NDCG@5=0.7889
-2026-05-10 17:46:29,827 [INFO]   [item_cold_testing] batch 299/299  n=4663  MAE=0.8963  RMSE=1.0136  NDCG@5=0.7920
-2026-05-10 17:46:30,340 [INFO] Evaluating: user_and_item_cold_testing
-2026-05-10 17:47:09,053 [INFO]   [user_and_item_cold_testing] batch 50/75  n=786  MAE=0.8933  RMSE=1.0051  NDCG@5=0.8300
-2026-05-10 17:47:30,671 [INFO]   [user_and_item_cold_testing] batch 75/75  n=1174  MAE=0.8954  RMSE=1.0130  NDCG@5=0.8222
-2026-05-10 17:47:31,282 [INFO]   FINAL � ORIGINAL epoch=3
-2026-05-10 17:47:31,283 [INFO]                          warm_up  (4215 tasks)  MAE=0.7661 | RMSE=0.8465 | NDCG@5=0.6303 | User_Fairness_Gap=0.0095 | Path_Exposure_Var=4075.0840
-2026-05-10 17:47:31,283 [INFO]                user_cold_testing  (1208 tasks)  MAE=0.8042 | RMSE=0.9586 | NDCG@5=0.8562 | User_Fairness_Gap=0.0137 | Path_Exposure_Var=64.5193
-2026-05-10 17:47:31,283 [INFO]                item_cold_testing  (4663 tasks)  MAE=0.8963 | RMSE=1.0136 | NDCG@5=0.7920 | User_Fairness_Gap=0.0810 | Path_Exposure_Var=10632.0479
-2026-05-10 17:47:31,283 [INFO]       user_and_item_cold_testing  (1174 tasks)  MAE=0.8954 | RMSE=1.0130 | NDCG@5=0.8222 | User_Fairness_Gap=0.0129 | Path_Exposure_Var=999.2040
+2026-05-10 21:37:12,091 [INFO] Loaded: MetaHIN-master/original_model_weights/movielens_original_epoch_3.pth
+2026-05-10 21:37:12,091 [INFO] Evaluating: warm_up
+2026-05-10 21:37:27,459 [INFO]   [warm_up] batch 50/287  n=720  MAE=0.7501  RMSE=0.8288  NDCG@5=0.6121
+2026-05-10 21:37:33,523 [INFO]   [warm_up] batch 100/287  n=1452  MAE=0.7556  RMSE=0.8327  NDCG@5=0.6084
+2026-05-10 21:37:40,377 [INFO]   [warm_up] batch 150/287  n=2197  MAE=0.7596  RMSE=0.8384  NDCG@5=0.6174
+2026-05-10 21:37:48,297 [INFO]   [warm_up] batch 200/287  n=2932  MAE=0.7593  RMSE=0.8397  NDCG@5=0.6255
+2026-05-10 21:37:54,662 [INFO]   [warm_up] batch 250/287  n=3666  MAE=0.7640  RMSE=0.8448  NDCG@5=0.6275
+2026-05-10 21:37:59,539 [INFO]   [warm_up] batch 287/287  n=4215  MAE=0.7657  RMSE=0.8462  NDCG@5=0.6304
+2026-05-10 21:38:00,214 [INFO]   ✓ warm_up (4215 tasks)  MAE=0.7657 | RMSE=0.8462 | NDCG@5=0.6304 | User_Fairness_Gap=0.0045 | Path_Exposure_Var=4708.9624 | Item_Fairness_Gap=0.9937
+2026-05-10 21:38:00,214 [INFO] Evaluating: user_cold_testing
+2026-05-10 21:38:55,822 [INFO]   [user_cold_testing] batch 50/76  n=800  MAE=0.8029  RMSE=0.9558  NDCG@5=0.8612
+2026-05-10 21:39:26,999 [INFO]   [user_cold_testing] batch 76/76  n=1208  MAE=0.8025  RMSE=0.9570  NDCG@5=0.8562
+2026-05-10 21:39:27,731 [INFO]   ✓ user_cold_testing (1208 tasks)  MAE=0.8025 | RMSE=0.9570 | NDCG@5=0.8562 | User_Fairness_Gap=0.0062 | Path_Exposure_Var=78.8417 | Item_Fairness_Gap=0.6253
+2026-05-10 21:39:27,731 [INFO] Evaluating: item_cold_testing
+2026-05-10 21:39:51,254 [INFO]   [item_cold_testing] batch 50/299  n=786  MAE=0.9003  RMSE=1.0240  NDCG@5=0.7943
+2026-05-10 21:40:02,602 [INFO]   [item_cold_testing] batch 100/299  n=1562  MAE=0.8842  RMSE=1.0006  NDCG@5=0.7857
+2026-05-10 21:40:17,333 [INFO]   [item_cold_testing] batch 150/299  n=2347  MAE=0.8918  RMSE=1.0109  NDCG@5=0.7853
+2026-05-10 21:40:30,814 [INFO]   [item_cold_testing] batch 200/299  n=3123  MAE=0.8942  RMSE=1.0130  NDCG@5=0.7902
+2026-05-10 21:40:42,672 [INFO]   [item_cold_testing] batch 250/299  n=3909  MAE=0.8913  RMSE=1.0081  NDCG@5=0.7889
+2026-05-10 21:40:53,975 [INFO]   [item_cold_testing] batch 299/299  n=4663  MAE=0.8959  RMSE=1.0131  NDCG@5=0.7920
+2026-05-10 21:40:54,613 [INFO]   ✓ item_cold_testing (4663 tasks)  MAE=0.8959 | RMSE=1.0131 | NDCG@5=0.7920 | User_Fairness_Gap=0.0822 | Path_Exposure_Var=10849.0312 | Item_Fairness_Gap=0.9426
+2026-05-10 21:40:54,613 [INFO] Evaluating: user_and_item_cold_testing
+2026-05-10 21:41:18,881 [INFO]   [user_and_item_cold_testing] batch 50/75  n=786  MAE=0.8961  RMSE=1.0074  NDCG@5=0.8305
+2026-05-10 21:41:26,170 [INFO]   [user_and_item_cold_testing] batch 75/75  n=1174  MAE=0.8957  RMSE=1.0129  NDCG@5=0.8221
+2026-05-10 21:41:26,920 [INFO]   ✓ user_and_item_cold_testing (1174 tasks)  MAE=0.8957 | RMSE=1.0129 | NDCG@5=0.8221 | User_Fairness_Gap=0.0131 | Path_Exposure_Var=995.3764 | Item_Fairness_Gap=0.8736
+2026-05-10 21:41:27,018 [INFO] Saved → results/results_original_3.json  |  Log → results/evaluation_original_3.log

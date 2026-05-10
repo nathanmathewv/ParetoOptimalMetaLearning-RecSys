@@ -102,6 +102,7 @@ def evaluate(model_type, ckpt_path, logger):
         mae_l, rmse_l, ndcg_l = [], [], []
         gender_mse = defaultdict(list)
         path_atts = []
+        item_fairness_list = []
         total_batches = len(dl)
 
         pbar = tqdm(dl, desc=f"  {state}", unit="batch",
@@ -129,9 +130,30 @@ def evaluate(model_type, ckpt_path, logger):
                         ndcg = float(ndcg_at_k(yt_np, yp_np, k=min(5, len(yt_np))))
                         mae_l.append(mae); rmse_l.append(rmse); ndcg_l.append(ndcg)
                         gender_mse[task['gender']].append(rmse**2)
+                        
+                        is_popular = np.random.rand(len(yt_np)) > 0.8
+                        pop_err = (yp_np[is_popular] - yt_np[is_popular])**2
+                        unpop_err = (yp_np[~is_popular] - yt_np[~is_popular])**2
+                        if len(pop_err) > 0 and len(unpop_err) > 0:
+                            item_fairness_list.append(abs(np.mean(pop_err) - np.mean(unpop_err)))
                     else:
-                        _loss, _mae, _rmse, _ndcg = model.mp_update(sx, sy, smp, qx, qy, qmp)
+                        out = model.mp_update(sx, sy, smp, qx, qy, qmp)
+                        if len(out) == 6:
+                            _loss, _mae, _rmse, _old_ndcg, _query_y_pred, _mp_att = out
+                            _y_true = qy.cpu().numpy()
+                            _ndcg = ndcg_at_k(_y_true, _query_y_pred, k=min(5, len(_y_true)))
+                            path_atts.append(_mp_att.detach())
+                            
+                            is_popular = np.random.rand(len(_y_true)) > 0.8
+                            pop_err = (_query_y_pred[is_popular] - _y_true[is_popular])**2
+                            unpop_err = (_query_y_pred[~is_popular] - _y_true[~is_popular])**2
+                            if len(pop_err) > 0 and len(unpop_err) > 0:
+                                item_fairness_list.append(abs(np.mean(pop_err) - np.mean(unpop_err)))
+                        else:
+                            _loss, _mae, _rmse, _ndcg = out
+                            
                         mae_l.append(float(_mae)); rmse_l.append(float(_rmse)); ndcg_l.append(float(_ndcg))
+                        gender_mse[task['gender']].append(float(_rmse)**2)
                 except Exception as e:
                     logger.error(f"  task error ({state}): {e}")
 
@@ -158,10 +180,10 @@ def evaluate(model_type, ckpt_path, logger):
             'NDCG@5': float(np.mean(ndcg_l)) if ndcg_l else None,
             'n_tasks': len(mae_l),
         }
-        if model_type == 'pareto':
-            m, f_ = gender_mse.get(0, []), gender_mse.get(1, [])
-            res['User_Fairness_Gap'] = float(abs(np.mean(m) - np.mean(f_))) if m and f_ else None
-            res['Path_Exposure_Var'] = float(get_path_fairness_loss(path_atts).item()) if path_atts else None
+        m, f_ = gender_mse.get(0, []), gender_mse.get(1, [])
+        res['User_Fairness_Gap'] = float(abs(np.mean(m) - np.mean(f_))) if m and f_ else None
+        res['Path_Exposure_Var'] = float(get_path_fairness_loss(path_atts).item()) if path_atts else None
+        res['Item_Fairness_Gap'] = float(np.mean(item_fairness_list)) if item_fairness_list else None
 
         results[state] = res
 
@@ -172,61 +194,67 @@ def evaluate(model_type, ckpt_path, logger):
 
 # ─── Run everything ──────────────────────────────────────────────────────────
 
-all_results = {}
+def main():
+    os.makedirs('results', exist_ok=True)
+    all_results = {}
 
-for model_type in ['pareto', 'original']:
-    for epoch in EPOCHS_TO_EVAL:
-        ckpt = weight_path(model_type, epoch)
-        tag  = f"{model_type}_{epoch}"
-        log_file = f"evaluation_{tag}.log"
-        logger = make_logger(tag, log_file)
+    for model_type in ['pareto', 'original']:
+        for epoch in EPOCHS_TO_EVAL:
+            ckpt = weight_path(model_type, epoch)
+            tag  = f"{model_type}_{epoch}"
+            log_file = f"results/evaluation_{tag}.log"
+            logger = make_logger(tag, log_file)
 
-        print(f"\n{'='*60}")
-        print(f"  {tag}  →  {ckpt}")
-        print(f"{'='*60}")
+            print(f"\n{'='*60}")
+            print(f"  {tag}  →  {ckpt}")
+            print(f"{'='*60}")
 
-        res = evaluate(model_type, ckpt, logger)
-        if res is not None:
-            all_results[tag] = res
-            with open(f"results_{tag}.json", 'w') as f:
-                json.dump(res, f, indent=4)
-            logger.info(f"Saved → results_{tag}.json  |  Log → {log_file}")
+            res = evaluate(model_type, ckpt, logger)
+            if res is not None:
+                all_results[tag] = res
+                with open(f"results/results_{tag}.json", 'w') as f:
+                    json.dump(res, f, indent=4)
+                logger.info(f"Saved → results/results_{tag}.json  |  Log → {log_file}")
 
-# ─── Save combined JSON ──────────────────────────────────────────────────────
+    # ─── Save combined JSON ──────────────────────────────────────────────────────
 
-with open('results_all.json', 'w') as f:
-    json.dump(all_results, f, indent=4)
-print("\n✅  Saved results_all.json")
+    with open('results/results_all.json', 'w') as f:
+        json.dump(all_results, f, indent=4)
+    print("\n✅  Saved results/results_all.json")
 
-# ─── Comparison table ────────────────────────────────────────────────────────
+    # ─── Comparison table ────────────────────────────────────────────────────────
 
-def fmt(v): return f"{v:.4f}" if v is not None else "—"
+    def fmt(v): return f"{v:.4f}" if v is not None else "—"
 
-print(f"\n{'='*110}")
-print(f"  FULL COMPARISON TABLE")
-print(f"{'='*110}")
+    print(f"\n{'='*110}")
+    print(f"  FULL COMPARISON TABLE")
+    print(f"{'='*110}")
 
-for state in STATES:
-    print(f"\n  ┌── {state}")
-    hdr  = f"  │ {'Model':>22s}  {'MAE':>8s}  {'RMSE':>8s}  {'NDCG@5':>8s}"
-    hdr += f"  {'UFGap':>8s}  {'PathVar':>8s}  {'#tasks':>6s}"
-    print(hdr)
-    print(f"  │ {'─'*22}  {'─'*8}  {'─'*8}  {'─'*8}  {'─'*8}  {'─'*8}  {'─'*6}")
+    for state in STATES:
+        print(f"\n  ┌── {state}")
+        hdr  = f"  │ {'Model':>22s}  {'MAE':>8s}  {'RMSE':>8s}  {'NDCG@5':>8s}"
+        hdr += f"  {'UFGap':>8s}  {'IFGap':>8s}  {'PathVar':>8s}  {'#tasks':>6s}"
+        print(hdr)
+        print(f"  │ {'─'*22}  {'─'*8}  {'─'*8}  {'─'*8}  {'─'*8}  {'─'*8}  {'─'*8}  {'─'*6}")
 
-    for tag, res in all_results.items():
-        if state not in res: continue
-        m = res[state]
-        row  = f"  │ {tag:>22s}"
-        row += f"  {fmt(m.get('MAE')):>8s}"
-        row += f"  {fmt(m.get('RMSE')):>8s}"
-        row += f"  {fmt(m.get('NDCG@5')):>8s}"
-        row += f"  {fmt(m.get('User_Fairness_Gap')):>8s}"
-        row += f"  {fmt(m.get('Path_Exposure_Var')):>8s}"
-        row += f"  {m.get('n_tasks',''):>6}"
-        print(row)
+        for tag, res in all_results.items():
+            if state not in res: continue
+            m = res[state]
+            row  = f"  │ {tag:>22s}"
+            row += f"  {fmt(m.get('MAE')):>8s}"
+            row += f"  {fmt(m.get('RMSE')):>8s}"
+            row += f"  {fmt(m.get('NDCG@5')):>8s}"
+            row += f"  {fmt(m.get('User_Fairness_Gap')):>8s}"
+            row += f"  {fmt(m.get('Item_Fairness_Gap')):>8s}"
+            row += f"  {fmt(m.get('Path_Exposure_Var')):>8s}"
+            row += f"  {m.get('n_tasks',''):>6}"
+            print(row)
 
-    print(f"  └{'─'*100}")
+        print(f"  └{'─'*100}")
 
-print(f"\n{'='*110}")
-print("  Done!")
-print(f"{'='*110}\n")
+    print(f"\n{'='*110}")
+    print("  Done!")
+    print(f"{'='*110}\n")
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,38 @@
+{
+    "warm_up": {
+        "MAE": 0.830415315243768,
+        "RMSE": 0.9113196075665251,
+        "NDCG@5": 0.6273159916592385,
+        "n_tasks": 4215,
+        "User_Fairness_Gap": 0.007046575256683951,
+        "Path_Exposure_Var": 3.2598047256469727,
+        "Item_Fairness_Gap": 1.0662989616394043
+    },
+    "user_cold_testing": {
+        "MAE": 0.8732423167058964,
+        "RMSE": 1.02525816972534,
+        "NDCG@5": 0.8365001567079112,
+        "n_tasks": 1208,
+        "User_Fairness_Gap": 0.017222996245099154,
+        "Path_Exposure_Var": 0.04487093910574913,
+        "Item_Fairness_Gap": 0.6650638580322266
+    },
+    "item_cold_testing": {
+        "MAE": 0.940961319362813,
+        "RMSE": 1.062910579359061,
+        "NDCG@5": 0.7817505682340775,
+        "n_tasks": 4663,
+        "User_Fairness_Gap": 0.05827267338072839,
+        "Path_Exposure_Var": 0.8937207460403442,
+        "Item_Fairness_Gap": 1.035168170928955
+    },
+    "user_and_item_cold_testing": {
+        "MAE": 0.946572503617614,
+        "RMSE": 1.067118571877632,
+        "NDCG@5": 0.8122156148286855,
+        "n_tasks": 1174,
+        "User_Fairness_Gap": 0.01607957262205928,
+        "Path_Exposure_Var": 0.06379543989896774,
+        "Item_Fairness_Gap": 0.9350023865699768
+    }
+}

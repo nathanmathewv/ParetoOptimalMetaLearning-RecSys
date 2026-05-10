@@ -1,27 +1,26 @@
-2026-05-10 17:21:19,357 [INFO] Model: original | Epoch: 2 | Checkpoint: MetaHIN-master\original_model_weights\movielens_original_epoch_2.pth
-2026-05-10 17:21:21,897 [INFO] Loaded original weights from MetaHIN-master\original_model_weights\movielens_original_epoch_2.pth
-2026-05-10 17:21:21,898 [INFO] Evaluating: warm_up
-2026-05-10 17:21:42,921 [INFO]   [warm_up] batch 50/287  n=720  MAE=0.7899  RMSE=0.8720  NDCG@5=0.6144
-2026-05-10 17:21:54,534 [INFO]   [warm_up] batch 100/287  n=1452  MAE=0.7948  RMSE=0.8745  NDCG@5=0.6092
-2026-05-10 17:22:06,543 [INFO]   [warm_up] batch 150/287  n=2197  MAE=0.7989  RMSE=0.8805  NDCG@5=0.6184
-2026-05-10 17:22:18,739 [INFO]   [warm_up] batch 200/287  n=2932  MAE=0.7977  RMSE=0.8807  NDCG@5=0.6260
-2026-05-10 17:22:30,252 [INFO]   [warm_up] batch 250/287  n=3666  MAE=0.8043  RMSE=0.8875  NDCG@5=0.6278
-2026-05-10 17:22:38,731 [INFO]   [warm_up] batch 287/287  n=4215  MAE=0.8052  RMSE=0.8885  NDCG@5=0.6309
-2026-05-10 17:22:39,252 [INFO] Evaluating: user_cold_testing
-2026-05-10 17:27:36,887 [INFO]   [user_cold_testing] batch 50/76  n=800  MAE=0.8013  RMSE=0.9561  NDCG@5=0.8602
-2026-05-10 17:29:47,509 [INFO]   [user_cold_testing] batch 76/76  n=1208  MAE=0.8022  RMSE=0.9594  NDCG@5=0.8547
-2026-05-10 17:29:48,156 [INFO] Evaluating: item_cold_testing
-2026-05-10 17:30:38,426 [INFO]   [item_cold_testing] batch 50/299  n=786  MAE=0.8940  RMSE=1.0237  NDCG@5=0.7927
-2026-05-10 17:31:03,070 [INFO]   [item_cold_testing] batch 100/299  n=1562  MAE=0.8795  RMSE=1.0006  NDCG@5=0.7843
-2026-05-10 17:31:35,842 [INFO]   [item_cold_testing] batch 150/299  n=2347  MAE=0.8880  RMSE=1.0125  NDCG@5=0.7832
-2026-05-10 17:32:05,026 [INFO]   [item_cold_testing] batch 200/299  n=3123  MAE=0.8907  RMSE=1.0146  NDCG@5=0.7877
-2026-05-10 17:32:30,568 [INFO]   [item_cold_testing] batch 250/299  n=3909  MAE=0.8905  RMSE=1.0127  NDCG@5=0.7861
-2026-05-10 17:32:55,286 [INFO]   [item_cold_testing] batch 299/299  n=4663  MAE=0.8956  RMSE=1.0185  NDCG@5=0.7886
-2026-05-10 17:32:55,818 [INFO] Evaluating: user_and_item_cold_testing
-2026-05-10 17:33:43,792 [INFO]   [user_and_item_cold_testing] batch 50/75  n=786  MAE=0.8796  RMSE=0.9969  NDCG@5=0.8300
-2026-05-10 17:34:02,104 [INFO]   [user_and_item_cold_testing] batch 75/75  n=1174  MAE=0.8835  RMSE=1.0068  NDCG@5=0.8211
-2026-05-10 17:34:02,753 [INFO]   FINAL � ORIGINAL epoch=2
-2026-05-10 17:34:02,754 [INFO]                          warm_up  (4215 tasks)  MAE=0.8052 | RMSE=0.8885 | NDCG@5=0.6309 | User_Fairness_Gap=0.0235 | Path_Exposure_Var=1044.1848
-2026-05-10 17:34:02,755 [INFO]                user_cold_testing  (1208 tasks)  MAE=0.8022 | RMSE=0.9594 | NDCG@5=0.8547 | User_Fairness_Gap=0.0071 | Path_Exposure_Var=8.3266
-2026-05-10 17:34:02,755 [INFO]                item_cold_testing  (4663 tasks)  MAE=0.8956 | RMSE=1.0185 | NDCG@5=0.7886 | User_Fairness_Gap=0.0797 | Path_Exposure_Var=1913.6072
-2026-05-10 17:34:02,755 [INFO]       user_and_item_cold_testing  (1174 tasks)  MAE=0.8835 | RMSE=1.0068 | NDCG@5=0.8211 | User_Fairness_Gap=0.0335 | Path_Exposure_Var=141.9696
+2026-05-10 21:32:58,182 [INFO] Loaded: MetaHIN-master/original_model_weights/movielens_original_epoch_2.pth
+2026-05-10 21:32:58,182 [INFO] Evaluating: warm_up
+2026-05-10 21:33:13,236 [INFO]   [warm_up] batch 50/287  n=720  MAE=0.7947  RMSE=0.8765  NDCG@5=0.6143
+2026-05-10 21:33:19,400 [INFO]   [warm_up] batch 100/287  n=1452  MAE=0.7973  RMSE=0.8770  NDCG@5=0.6094
+2026-05-10 21:33:26,301 [INFO]   [warm_up] batch 150/287  n=2197  MAE=0.8011  RMSE=0.8826  NDCG@5=0.6185
+2026-05-10 21:33:33,022 [INFO]   [warm_up] batch 200/287  n=2932  MAE=0.8004  RMSE=0.8832  NDCG@5=0.6261
+2026-05-10 21:33:39,079 [INFO]   [warm_up] batch 250/287  n=3666  MAE=0.8058  RMSE=0.8890  NDCG@5=0.6279
+2026-05-10 21:33:43,931 [INFO]   [warm_up] batch 287/287  n=4215  MAE=0.8068  RMSE=0.8901  NDCG@5=0.6311
+2026-05-10 21:33:44,517 [INFO]   ✓ warm_up (4215 tasks)  MAE=0.8068 | RMSE=0.8901 | NDCG@5=0.6311 | User_Fairness_Gap=0.0230 | Path_Exposure_Var=1031.5662 | Item_Fairness_Gap=1.0218
+2026-05-10 21:33:44,517 [INFO] Evaluating: user_cold_testing
+2026-05-10 21:34:40,765 [INFO]   [user_cold_testing] batch 50/76  n=800  MAE=0.8017  RMSE=0.9560  NDCG@5=0.8601
+2026-05-10 21:35:07,478 [INFO]   [user_cold_testing] batch 76/76  n=1208  MAE=0.8026  RMSE=0.9595  NDCG@5=0.8546
+2026-05-10 21:35:08,147 [INFO]   ✓ user_cold_testing (1208 tasks)  MAE=0.8026 | RMSE=0.9595 | NDCG@5=0.8546 | User_Fairness_Gap=0.0050 | Path_Exposure_Var=9.4068 | Item_Fairness_Gap=0.6595
+2026-05-10 21:35:08,147 [INFO] Evaluating: item_cold_testing
+2026-05-10 21:35:31,485 [INFO]   [item_cold_testing] batch 50/299  n=786  MAE=0.8947  RMSE=1.0245  NDCG@5=0.7929
+2026-05-10 21:35:41,218 [INFO]   [item_cold_testing] batch 100/299  n=1562  MAE=0.8811  RMSE=1.0023  NDCG@5=0.7845
+2026-05-10 21:36:07,014 [INFO]   [item_cold_testing] batch 150/299  n=2347  MAE=0.8890  RMSE=1.0135  NDCG@5=0.7834
+2026-05-10 21:36:21,509 [INFO]   [item_cold_testing] batch 200/299  n=3123  MAE=0.8910  RMSE=1.0149  NDCG@5=0.7880
+2026-05-10 21:36:31,923 [INFO]   [item_cold_testing] batch 250/299  n=3909  MAE=0.8906  RMSE=1.0128  NDCG@5=0.7863
+2026-05-10 21:36:42,637 [INFO]   [item_cold_testing] batch 299/299  n=4663  MAE=0.8954  RMSE=1.0184  NDCG@5=0.7888
+2026-05-10 21:36:43,390 [INFO]   ✓ item_cold_testing (4663 tasks)  MAE=0.8954 | RMSE=1.0184 | NDCG@5=0.7888 | User_Fairness_Gap=0.0843 | Path_Exposure_Var=1947.2466 | Item_Fairness_Gap=0.9573
+2026-05-10 21:36:43,390 [INFO] Evaluating: user_and_item_cold_testing
+2026-05-10 21:37:04,430 [INFO]   [user_and_item_cold_testing] batch 50/75  n=786  MAE=0.8804  RMSE=0.9981  NDCG@5=0.8299
+2026-05-10 21:37:11,299 [INFO]   [user_and_item_cold_testing] batch 75/75  n=1174  MAE=0.8847  RMSE=1.0086  NDCG@5=0.8211
+2026-05-10 21:37:11,997 [INFO]   ✓ user_and_item_cold_testing (1174 tasks)  MAE=0.8847 | RMSE=1.0086 | NDCG@5=0.8211 | User_Fairness_Gap=0.0301 | Path_Exposure_Var=126.2707 | Item_Fairness_Gap=0.8970
+2026-05-10 21:37:12,081 [INFO] Saved → results/results_original_2.json  |  Log → results/evaluation_original_2.log
