@@ -123,12 +123,21 @@ def evaluate_model(model_type, config_path, checkpoint_path, logger):
                         gender_mse[task['gender']].append(rmse ** 2)
 
                     else:
-                        _loss, _mae, _rmse, _ndcg = model.mp_update(
+                        out = model.mp_update(
                             supp_x, supp_y, supp_mp, query_x, query_y, query_mp
                         )
+                        if len(out) == 6:
+                            _loss, _mae, _rmse, _old_ndcg, _query_y_pred, _mp_att = out
+                            _y_true = query_y.cpu().numpy()
+                            _ndcg = ndcg_at_k(_y_true, _query_y_pred, k=min(5, len(_y_true)))
+                            path_fairness_list.append(_mp_att.detach())
+                        else:
+                            _loss, _mae, _rmse, _ndcg = out
+                            
                         mae_list.append(float(_mae))
                         rmse_list.append(float(_rmse))
                         ndcg_list.append(float(_ndcg))
+                        gender_mse[task['gender']].append(float(_rmse) ** 2)
 
                 except Exception as e:
                     logger.error(f"  task error: {e}")
@@ -163,17 +172,16 @@ def evaluate_model(model_type, config_path, checkpoint_path, logger):
             'n_tasks': len(mae_list),
         }
 
-        if model_type == 'pareto':
-            male_mse   = gender_mse.get(0, [])
-            female_mse = gender_mse.get(1, [])
-            result['User_Fairness_Gap'] = (
-                float(abs(np.mean(male_mse) - np.mean(female_mse)))
-                if male_mse and female_mse else None
-            )
-            result['Path_Exposure_Var'] = (
-                float(get_path_fairness_loss(path_fairness_list).item())
-                if path_fairness_list else None
-            )
+        male_mse   = gender_mse.get(0, [])
+        female_mse = gender_mse.get(1, [])
+        result['User_Fairness_Gap'] = (
+            float(abs(np.mean(male_mse) - np.mean(female_mse)))
+            if male_mse and female_mse else None
+        )
+        result['Path_Exposure_Var'] = (
+            float(get_path_fairness_loss(path_fairness_list).item())
+            if path_fairness_list else None
+        )
 
         all_results[state] = result
 

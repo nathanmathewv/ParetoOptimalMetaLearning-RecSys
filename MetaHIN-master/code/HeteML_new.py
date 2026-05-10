@@ -169,7 +169,7 @@ class HML(torch.nn.Module):
         query_y_pred = query_y_pred.data.cpu().numpy()
         mae, rmse = self.cal_metrics.prediction(query_y_real, query_y_pred)
         ndcg_5 = self.cal_metrics.ranking(query_y_real, query_y_pred, k=5)
-        return loss, mae, rmse, ndcg_5
+        return loss, mae, rmse, ndcg_5, query_y_pred, mp_att
 
     def mp_update_mp_MAML(self, support_set_x, support_set_y, support_set_mps, query_set_x, query_set_y, query_set_mps):
         """
@@ -325,8 +325,9 @@ class HML(torch.nn.Module):
             for mp in self.config['mp']:
                 support_mp[mp] = map(lambda x: x.to(device), support_mp[mp])
                 query_mp[mp] = map(lambda x: x.to(device), query_mp[mp])
-            _loss, _mae, _rmse, _ndcg_5 = self.mp_update(support_xs[i].to(device), support_ys[i].to(device), support_mp,
+            out = self.mp_update(support_xs[i].to(device), support_ys[i].to(device), support_mp,
                                                          query_xs[i].to(device), query_ys[i].to(device), query_mp)
+            _loss, _mae, _rmse, _ndcg_5 = out[0], out[1], out[2], out[3]
             # _loss, _mae, _rmse, _ndcg_5 = self.mp_update_mp_MAML(support_xs[i].to(device), support_ys[i].to(device), support_mp,
             #                                                      query_xs[i].to(device), query_ys[i].to(device), query_mp)
             # _loss, _mae, _rmse, _ndcg_5 = self.mp_update_multi_MAML(support_xs[i].to(device), support_ys[i].to(device), support_mp,
@@ -358,15 +359,17 @@ class HML(torch.nn.Module):
             support_mp[mp] = map(lambda x: x.to(device), support_mp[mp])
             query_mp[mp] = map(lambda x: x.to(device), query_mp[mp])
 
-        _, mae, rmse, ndcg_5 = self.mp_update(support_x.to(device), support_y.to(device), support_mp,
+        out = self.mp_update(support_x.to(device), support_y.to(device), support_mp,
                                               query_x.to(device), query_y.to(device), query_mp)
+        _, mae, rmse, ndcg_5 = out[0], out[1], out[2], out[3]
+        query_y_pred, mp_att = out[4], out[5]
         # _, mae, rmse, ndcg_5 = self.mp_update_mp_MAML(support_x.to(device), support_y.to(device), support_mp,
         #                                               query_x.to(device), query_y.to(device), query_mp)
         # _, mae, rmse, ndcg_5 = self.mp_update_multi_MAML(support_x.to(device), support_y.to(device), support_mp,
         #                                                  query_x.to(device), query_y.to(device), query_mp)
         # mae, rmse, ndcg_5 = self.eval_no_MAML(query_x.to(device), query_y.to(device), query_mp)
 
-        return mae, rmse, ndcg_5
+        return mae, rmse, ndcg_5, query_y_pred, mp_att
 
     def aggregator(self, task_weights_s, att):
         for idx, mp in enumerate(self.config['mp']):
